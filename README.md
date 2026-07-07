@@ -10,39 +10,43 @@
 
 # MJW HFP Framing Calculator
 
-A premium multi-step custom framing quote calculator for high-end framing professionals. It guides staff or customers through a structured five-step configuration flow — dimensions, matting, glass, frame selection, and final quote — with live pricing drawn from optional **PocketBase cloud pricing tables** and a built-in fallback pricing dataset for fully offline operation.
+A premium multi-step custom framing quote calculator for professional framers and retail framing counters. It guides staff or customers through a structured five-step quoting workflow covering dimensions, mat selection, glass type, frame profile, and final quote summary — with optional **PocketBase cloud pricing** so live price tables can be updated without a code deployment.
 
 ## Screenshots
 
-| Step 1 — Dimensions | Final Quote Step |
+| Step 1 — Dimensions | Step 5 — Quote Summary |
 | :---- | :---- |
-| ![MJW HFP Framing Calculator dimensions step — placeholder](screenshots/step1-dimensions.png) | ![MJW HFP Framing Calculator final quote step — placeholder](screenshots/step5-quote.png) |
+| *(Placeholder: Step 1 dimensions entry screen)* | *(Placeholder: Step 5 final quote summary screen)* |
 
 ## What It Does
 
-Unlike generic quoting spreadsheets, this calculator is purpose-built around the terminology and pricing logic that custom framing professionals already use.
+Unlike generic spreadsheet quoting tools, this calculator is built around the exact decision sequence a custom framing counter uses: measure first, then choose mats, glass, and frame profile, and finally review a fully priced quote.
 
 | Step | Screen | Purpose |
 | :---- | :---- | :---- |
-| **1 — Dimensions** | Artwork size entry | Collects width and height of the piece to be framed. |
-| **2 — Mat** | Mat board selection | Choose mat style, colour, and reveal dimensions. |
-| **3 — Glass** | Glazing selection | Select standard, UV-protective, or conservation glazing. |
-| **4 — Frame** | Moulding selection | Browse and select frame moulding with live pricing. |
-| **5 — Quote** | Final summary | Displays itemised pricing, totals, and a printable quote. |
+| **1** | Dimensions | Enter artwork width and height to establish the base opening size. |
+| **2** | Mat Selection | Choose mat board options; mat reveal and pricing calculated automatically. |
+| **3** | Glass Type | Select glazing option (e.g. clear, conservation, museum); price updated per choice. |
+| **4** | Frame Profile | Pick a moulding profile; per-foot pricing applied to the joined perimeter. |
+| **5** | Quote Summary | View the fully itemised quote with line totals and a grand total. |
 
-**Key interactions:**
+**Key features:**
 
-- Progress through a clearly marked step indicator showing current and completed stages.
-- Enter artwork dimensions to drive all downstream size-based price calculations.
-- Select mat, glass, and frame options with live price updates at each step.
-- Review a full itemised quote with line-item breakdown on the final step.
-- Pricing data is loaded from PocketBase when configured, or falls back to the built-in pricing dataset automatically.
+- Guided five-step wizard with a visible step indicator throughout.
+- Automatic price calculation as selections change at each step.
+- Fallback local pricing data so the calculator works with no backend configured.
+- Optional **PocketBase cloud pricing** so administrators can update price tables live.
+- Clean, mobile-friendly layout suitable for use on a tablet at a framing counter.
 
 ## How to Use
 
-The calculator opens at Step 1 and walks the user forward through five sequential screens. Enter the artwork dimensions first, as all pricing calculations depend on them. Each subsequent step presents available options with current pricing. The final quote screen shows a complete itemised summary suitable for presenting to a customer or printing as a record.
+Open the app and begin at Step 1 by entering the artwork dimensions. Progress through each step using the Next button; the step indicator at the top tracks position in the workflow. Each selection screen shows available options with pricing. On Step 5 the quote is fully itemised with line-item costs and a grand total, ready to present to a customer or capture for an order.
 
-The app is intentionally designed as a **desktop and tablet tool** for use at a framing counter or during a customer consultation, though it is fully responsive on smaller screens for reference use.
+Because the calculator uses fallback pricing when no PocketBase instance is configured, it is immediately usable for demonstrations and staff training without any backend setup.
+
+## Step Indicator
+
+The `StepIndicator` component renders a persistent progress bar across all five steps. It shows completed, current, and upcoming steps so users always know how far through the quoting process they are.
 
 ## Stack
 
@@ -53,7 +57,7 @@ The app is intentionally designed as a **desktop and tablet tool** for use at a 
 | Styling | Tailwind CSS 3 |
 | Icons | Lucide React |
 | Optional cloud pricing | PocketBase |
-| Hosting | Static / self-hosted |
+| Hosting | — |
 
 ## Local Development
 
@@ -65,7 +69,7 @@ npm install
 npm run dev
 ```
 
-The app works fully with **no environment variables**. Without a PocketBase URL configured, it runs entirely in the browser using the built-in fallback pricing dataset defined in `src/data/fallbackPricing.ts`. No network connection or backend is required for local development or offline operation.
+The app works fully with **no environment variables**. Without a PocketBase URL configured, it runs entirely from the local fallback pricing data in `src/data/fallbackPricing.ts`, making it safe to use and demo before any backend is configured.
 
 ## Quality Checks
 
@@ -93,29 +97,42 @@ npm run typecheck  # TypeScript type check (no emit)
 
 ## Environment Variables
 
-All environment variables are optional. The app is fully production-usable in local/offline mode with no configured variables.
+All environment variables are optional. The calculator remains fully usable in local-only mode with no configured variables.
 
 | Variable | Required? | Scope | Enables | Description |
 | :---- | :---- | :---- | :---- | :---- |
-| `VITE_POCKETBASE_URL` | Optional | Frontend/public | Live cloud pricing tables | Public PocketBase/PocketHost URL used to fetch current mat, glass, and frame pricing. Example: `https://mjwdesign-core.pockethost.io`. When absent, the app uses fallback pricing automatically. |
+| `VITE_POCKETBASE_URL` | Optional | Frontend/public | PocketBase live pricing tables | Public PocketBase/PocketHost URL used to fetch up-to-date mat, glass, and frame pricing. Example: `https://mjwdesign-core.pockethost.io`. When absent, fallback pricing from `src/data/fallbackPricing.ts` is used automatically. |
 
-## Pricing Data and PocketBase Cloud Pricing
+## Fallback Pricing and PocketBase Cloud Pricing
 
-The app works fully with **no environment variables**. In offline mode, all pricing is served from `src/data/fallbackPricing.ts`, which contains a complete static dataset for mat, glass, and frame options. This makes the calculator safe to deploy and use before PocketBase is configured.
+The app ships with a complete set of fallback prices defined in `src/data/fallbackPricing.ts`. This means the calculator works out of the box for demos, staff training, and offline use without any backend.
 
-Live pricing is optional. When `VITE_POCKETBASE_URL` is configured, the `usePricing` hook fetches current pricing records from PocketBase collections at startup. If the fetch fails for any reason, the app transparently falls back to the built-in dataset so the calculator remains usable.
+Cloud pricing is optional. When `VITE_POCKETBASE_URL` is configured, the `usePricing` hook fetches live pricing records from PocketBase, replacing the fallback data. This allows pricing to be updated by an administrator in the PocketBase dashboard without touching code or triggering a redeployment.
 
 ### Recommended PocketBase Pricing Collections
 
-Configure PocketBase collections to match the pricing categories used by the calculator. The `usePricing` hook expects to read records from collections covering mat options, glass options, and frame moulding options.
+Pricing collections should contain at minimum a name/label field and a price field. A recommended starting schema is shown below.
 
-| Collection | Purpose | Key Fields |
+| Field | Type | Notes |
 | :---- | :---- | :---- |
-| `mat_options` | Mat board styles and pricing | `name`, `description`, `price_per_unit`, `colour`, `active` |
-| `glass_options` | Glazing types and pricing | `name`, `description`, `price_per_sqft`, `uv_protection`, `active` |
-| `frame_options` | Moulding styles and pricing | `name`, `description`, `price_per_foot`, `material`, `active` |
+| `label` | text | Display name shown in the calculator UI. |
+| `price` | number | Unit price used in quote calculations. |
+| `unit` | text | Pricing unit, e.g. `per_foot`, `per_opening`, `flat`. |
+| `active` | bool | When false, the option is hidden from the calculator. |
+| `sort_order` | number | Controls display ordering within a step. |
 
-Recommended collection rules should allow public read access so the calculator can fetch pricing without requiring user authentication. Write and delete rules should be restricted to authenticated admin users only.
+Recommended collection rules should allow unauthenticated read access so the calculator can fetch pricing without requiring a user login. Write access should be restricted to authenticated administrators.
+
+## Pricing Calculation Logic
+
+The `src/utils/pricing.ts` module handles all quote arithmetic. Given the dimensions entered in Step 1, it computes:
+
+- **Mat cost** — based on opening area or reveal, depending on mat type.
+- **Glass cost** — flat or area-based rate for the selected glazing option.
+- **Frame cost** — per-linear-foot rate applied to the joined perimeter (computed from width and height).
+- **Line totals and grand total** — summed and surfaced in the Step 5 summary.
+
+The `usePricing` hook in `src/hooks/usePricing.ts` abstracts the data source, returning either live PocketBase records or fallback data, so `pricing.ts` always receives a consistent pricing shape regardless of backend configuration.
 
 ## Project Structure
 
@@ -123,36 +140,36 @@ Recommended collection rules should allow public read access so the calculator c
 src/
   components/
     calculator/
-      Step1Dimensions.tsx     # Artwork dimensions entry
-      Step2Mat.tsx            # Mat board selection
-      Step3Glass.tsx          # Glazing selection
-      Step4Frame.tsx          # Frame moulding selection
-      Step5Quote.tsx          # Final itemised quote display
-      StepIndicator.tsx       # Multi-step progress indicator
+      Step1Dimensions.tsx   # Artwork dimension entry
+      Step2Mat.tsx          # Mat board selection
+      Step3Glass.tsx        # Glazing type selection
+      Step4Frame.tsx        # Frame profile selection
+      Step5Quote.tsx        # Itemised quote summary
+      StepIndicator.tsx     # Step progress indicator
   data/
-    fallbackPricing.ts        # Static offline pricing dataset
+    fallbackPricing.ts      # Local pricing used when PocketBase is absent
   hooks/
-    usePricing.ts             # PocketBase pricing fetch with fallback logic
+    usePricing.ts           # Data-source abstraction hook (PocketBase or fallback)
   lib/
-    pocketbase.ts             # Optional PocketBase client wrapper
+    pocketbase.ts           # Optional PocketBase client wrapper
   types/
-    index.ts                  # Shared pricing and calculator types
+    index.ts                # Shared types for pricing, selections, and quote data
   utils/
-    pricing.ts                # Price calculation logic
-  App.tsx                     # Root layout and step state management
-  main.tsx                    # Entry point
+    pricing.ts              # Quote calculation logic
+  App.tsx                   # Root layout + wizard state management
+  main.tsx                  # Entry point
 ```
 
 ## Changelog
 
 ### v0.1.0 — Initial Build
 
-- Implemented five-step calculator flow: dimensions, mat, glass, frame, and final quote.
-- Added step indicator component with current and completed state styling.
-- Added live pricing fetch via `usePricing` hook with automatic fallback to static dataset.
-- Added optional PocketBase integration for cloud-hosted pricing tables.
-- Built complete itemised quote summary on the final step.
-- Configured Tailwind CSS, TypeScript strict mode, and ESLint for production-quality development baseline.
+- Five-step quoting wizard covering dimensions, mat, glass, frame, and quote summary.
+- Automatic per-step price calculation with itemised grand total in Step 5.
+- Fallback pricing data for fully offline/no-backend operation.
+- Optional PocketBase cloud pricing via `VITE_POCKETBASE_URL` environment variable.
+- `usePricing` hook abstracting live vs. fallback data source.
+- Mobile-friendly Tailwind layout suitable for tablet use at a framing counter.
 
 ---
 
