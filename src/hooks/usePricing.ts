@@ -13,7 +13,7 @@ interface PricingData {
 export function usePricing(): PricingData {
   const [glassOptions, setGlassOptions] = useState<GlassOption[]>(GLASS_OPTIONS);
   const [frameOptions, setFrameOptions] = useState<FrameOption[]>(FRAME_OPTIONS);
-  const [matPricing, setMatPricing] = useState<MatPricing[]>(MAT_PRICING);
+  const [matPricing] = useState<MatPricing[]>(MAT_PRICING);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
